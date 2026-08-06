@@ -3,6 +3,7 @@ import { BlockButton } from "@/components/BlockButton";
 import { InputField } from "@/components/InputField";
 import { LabeledDivider } from "@/components/LabeledDivider";
 import { Logo } from "@/components/Logo";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -21,6 +22,12 @@ export default function AuthScreen() {
   const [password, setPassword] = useState("");
 
   const isSignIn = mode === "signIn";
+
+  const router = useRouter();
+
+  const handleSignIn = () => {
+    router.replace("/(authenticated)");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -71,7 +78,10 @@ export default function AuthScreen() {
             </View>
 
             <View className="w-full gap-y-4">
-              <BlockButton text={isSignIn ? "Sign In" : "Create Account"} />
+              <BlockButton
+                text={isSignIn ? "Sign In" : "Create Account"}
+                onPress={handleSignIn}
+              />
               <LabeledDivider text="or" />
               <BlockButton text="Continue with Google" variant="secondary" />
             </View>
