@@ -21,13 +21,13 @@ export function AuthTabs({ mode, onChange }: AuthTabsProps) {
           <Pressable
             key={tab.key}
             onPress={() => onChange(tab.key)}
-            className={`flex-1 items-center py-3 rounded-lg ${
+            className={`flex-1 items-center py-2.5 rounded-lg ${
               active ? "bg-surface" : ""
             }`}
           >
             <Text
-              className={`text-sm font-bold ${
-                active ? "text-primary" : "text-text-secondary"
+              className={`text-sm font-semibold ${
+                active ? "text-primary" : "text-text-muted"
               }`}
             >
               {tab.label}

@@ -2,8 +2,16 @@ import { AuthMode, AuthTabs } from "@/components/AuthTabs";
 import { BlockButton } from "@/components/BlockButton";
 import { InputField } from "@/components/InputField";
 import { LabeledDivider } from "@/components/LabeledDivider";
+import { Logo } from "@/components/Logo";
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AuthScreen() {
@@ -15,56 +23,61 @@ export default function AuthScreen() {
   const isSignIn = mode === "signIn";
 
   return (
-    <SafeAreaView className="flex-1">
-      <View className="flex-1 px-8 py-4 items-center justify-center gap-y-6 bg-background">
-        <View className="items-center gap-2 pb-4">
-          <Text className="text-4xl font-bold">Tala</Text>
-          <Text className="text-md text-slate-400">
-            Your shared family expense book
-          </Text>
-        </View>
+    <SafeAreaView className="flex-1 bg-background">
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          contentContainerClassName="flex-grow px-8 py-6 items-center justify-center gap-y-8"
+          keyboardShouldPersistTaps="handled"
+        >
+          <Logo tagline="Your shared family expense books" />
 
-        <AuthTabs mode={mode} onChange={setMode} />
+          <View className="w-full gap-y-6">
+            <AuthTabs mode={mode} onChange={setMode} />
 
-        <View className="w-full gap-y-4">
-          {!isSignIn && (
-            <InputField
-              label="Display Name"
-              text={displayName}
-              onChangeText={setDisplayName}
-            />
-          )}
+            <View className="w-full gap-y-4">
+              {!isSignIn && (
+                <InputField
+                  label="Display Name"
+                  text={displayName}
+                  onChangeText={setDisplayName}
+                  placeholder="Juan Dela Cruz"
+                />
+              )}
 
-          <InputField
-            label="Email Address"
-            text={email}
-            onChangeText={setEmail}
-          />
+              <InputField
+                label="Email Address"
+                text={email}
+                onChangeText={setEmail}
+                type="email"
+              />
 
-          <InputField
-            label="Password"
-            text={password}
-            onChangeText={setPassword}
-            isPassword
-          />
+              <InputField
+                label="Password"
+                text={password}
+                onChangeText={setPassword}
+                type="password"
+              />
 
-          {isSignIn && (
-            <Pressable className="self-end">
-              <Text className="text-sm text-primary font-bold">
-                Forgot Password?
-              </Text>
-            </Pressable>
-          )}
-        </View>
+              {isSignIn && (
+                <Pressable className="self-end">
+                  <Text className="text-sm font-semibold text-primary">
+                    Forgot Password?
+                  </Text>
+                </Pressable>
+              )}
+            </View>
 
-        <BlockButton text={isSignIn ? "Sign in" : "Create Account"} />
-        <LabeledDivider text="or continue with" />
-        <BlockButton
-          text="Google"
-          bgColor="bg-surface"
-          textColor="text-on-surface"
-        />
-      </View>
+            <View className="w-full gap-y-4">
+              <BlockButton text={isSignIn ? "Sign In" : "Create Account"} />
+              <LabeledDivider text="or" />
+              <BlockButton text="Continue with Google" variant="secondary" />
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

@@ -1,19 +1,34 @@
 import { Pressable, Text } from "react-native";
 
+type Variant = "primary" | "secondary";
+
 interface BlockButtonProps {
   text: string;
-  bgColor?: string;
-  textColor?: string;
+  variant?: Variant;
+  onPress?: () => void;
 }
+
+const VARIANT_STYLES: Record<Variant, { bg: string; text: string }> = {
+  primary: { bg: "bg-primary", text: "text-on-primary" },
+  secondary: {
+    bg: "bg-surface border border-border",
+    text: "text-text-primary",
+  },
+};
 
 export function BlockButton({
   text,
-  bgColor = "bg-primary",
-  textColor = "text-slate-50",
+  variant = "primary",
+  onPress,
 }: BlockButtonProps) {
+  const { bg, text: textColor } = VARIANT_STYLES[variant];
+
   return (
-    <Pressable className={`w-full items-center py-5 rounded-2xl ${bgColor}`}>
-      <Text className={`text-md font-bold ${textColor}`}>{text}</Text>
+    <Pressable
+      onPress={onPress}
+      className={`w-full items-center py-4 rounded-xl active:opacity-80 ${bg}`}
+    >
+      <Text className={`text-base font-semibold ${textColor}`}>{text}</Text>
     </Pressable>
   );
 }
