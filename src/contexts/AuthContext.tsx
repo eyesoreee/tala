@@ -1,11 +1,8 @@
 import { supabase } from "@/lib/supabase";
 import { authService } from "@/services/auth.services";
 import { Session } from "@supabase/supabase-js";
-import * as WebBrowser from "expo-web-browser";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
-
-WebBrowser.maybeCompleteAuthSession();
 
 type AuthContextType = {
   session: Session | null;

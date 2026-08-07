@@ -4,8 +4,10 @@
   "version": "1.0.0",
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-vector-icons/ionicons": "^13.1.2",
     "@supabase/supabase-js": "^2.112.1",
     "babel-preset-expo": "^57.0.3",
+    "clsx": "^2.1.1",
     "expo": "^57.0.8",
     "expo-auth-session": "~57.0.6",
     "expo-constants": "~57.0.6",
@@ -35,6 +37,7 @@
     "react-native-url-polyfill": "^4.0.0",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.10.0",
+    "tailwind-merge": "^3.6.0",
     "tailwindcss": "^3.4.19"
   },
   "devDependencies": {
