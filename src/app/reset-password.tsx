@@ -1,8 +1,6 @@
 import { BlockButton } from "@/components/BlockButton";
 import { InputField } from "@/components/InputField";
-import { LoadingOverlay } from "@/components/LoadingOVerlay";
 import { Logo } from "@/components/Logo";
-import { useAuth } from "@/contexts/AuthContext";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
@@ -17,16 +15,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ResetPasswordScreen() {
   const [password, setPassword] = useState("");
-  const { completePasswordReset, signOut, submitting } = useAuth();
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (password.length < 6) {
       Alert.alert("Password must be at least 6 characters.");
       return;
     }
-
-    const success = await completePasswordReset(password);
-    if (success) router.replace("/(authenticated)");
+    Alert.alert("Coming soon", "Password reset is not available yet.");
   };
 
   return (
@@ -48,14 +43,12 @@ export default function ResetPasswordScreen() {
             <BlockButton text="Update Password" onPress={handleSubmit} />
           </View>
 
-          <Pressable onPress={() => signOut()}>
+          <Pressable onPress={() => router.back()}>
             <Text className="text-sm font-semibold text-text-muted text-center">
-              Cancel
+              Back
             </Text>
           </Pressable>
         </View>
-
-        {submitting && <LoadingOverlay />}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

@@ -1,7 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { authService } from "@/services/auth.services";
 import { Session } from "@supabase/supabase-js";
-import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
@@ -67,7 +66,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setSubmitting(false);
     setIsPasswordRecovery(false);
     if (error) Alert.alert("Sign out failed", error.message);
-    else router.replace("/");
   }
 
   return (

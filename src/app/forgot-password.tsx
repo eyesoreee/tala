@@ -1,8 +1,6 @@
 import { BlockButton } from "@/components/BlockButton";
 import { InputField } from "@/components/InputField";
-import { LoadingOverlay } from "@/components/LoadingOVerlay";
 import { Logo } from "@/components/Logo";
-import { useAuth } from "@/contexts/AuthContext";
 import { EMAIL_REGEX } from "@/utils/validation";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -18,14 +16,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
-  const { resetPassword, submitting } = useAuth();
 
   const handleSubmit = () => {
     if (!EMAIL_REGEX.test(email.trim())) {
       Alert.alert("Enter a valid email address.");
       return;
     }
-    resetPassword(email.trim());
+    Alert.alert("Coming soon", "Password reset is not available yet.");
   };
 
   return (
@@ -53,8 +50,6 @@ export default function ForgotPasswordScreen() {
             </Text>
           </Pressable>
         </View>
-
-        {submitting && <LoadingOverlay />}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
