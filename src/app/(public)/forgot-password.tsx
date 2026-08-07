@@ -19,7 +19,7 @@ export default function ForgotPasswordScreen() {
           </Text>
         </View>
 
-        <Pressable onPress={() => router.replace("/sign-in")}>
+        <Pressable onPress={() => router.replace("/")}>
           <Text className="text-sm font-semibold text-primary text-center">
             Back to Sign In
           </Text>

@@ -19,7 +19,7 @@ export default function ResetPasswordScreen() {
           </Text>
         </View>
 
-        <Pressable onPress={() => router.replace("/sign-in")}>
+        <Pressable onPress={() => router.replace("/")}>
           <Text className="text-sm font-semibold text-text-muted text-center">
             Back to Sign In
           </Text>

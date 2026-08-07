@@ -10,13 +10,11 @@ function RootNavigator() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={!!session}>
-        <Stack.Screen name="(authenticated)" />
+        <Stack.Screen name="(private)" />
       </Stack.Protected>
 
       <Stack.Protected guard={!session}>
-        <Stack.Screen name="sign-in" />
-        <Stack.Screen name="forgot-password" />
-        <Stack.Screen name="reset-password" />
+        <Stack.Screen name="(public)" />
       </Stack.Protected>
     </Stack>
   );
