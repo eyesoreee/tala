@@ -19,18 +19,6 @@ type AuthContextType = {
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-function getFriendlyAuthError(
-  error: { message?: string; status?: number } | null,
-): string {
-  const message = error?.message ?? "Something went wrong.";
-
-  if (error?.status === 429 || message.toLowerCase().includes("rate limit")) {
-    return "We've sent too many emails recently. Please wait a few minutes and try again.";
-  }
-
-  return message;
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [initializing, setInitializing] = useState(true);
@@ -62,14 +50,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setSubmitting(true);
     const { error } = await authService.signIn(email, password);
     setSubmitting(false);
-    if (error) Alert.alert("Sign in failed", getFriendlyAuthError(error));
+    if (error) Alert.alert("Sign in failed", error.message);
   }
 
   async function signUp(email: string, password: string, displayName: string) {
     setSubmitting(true);
     const { error } = await authService.signUp(email, password, displayName);
     setSubmitting(false);
-    if (error) Alert.alert("Sign up failed", getFriendlyAuthError(error));
+    if (error) Alert.alert("Sign up failed", error.message);
   }
 
   async function signOut() {
@@ -77,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await authService.signOut();
     setSubmitting(false);
     setIsPasswordRecovery(false);
-    if (error) Alert.alert("Sign out failed", getFriendlyAuthError(error));
+    if (error) Alert.alert("Sign out failed", error.message);
   }
 
   return (

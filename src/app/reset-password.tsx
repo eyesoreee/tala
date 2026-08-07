@@ -1,30 +1,55 @@
+import { BlockButton } from "@/components/BlockButton";
+import { InputField } from "@/components/InputField";
 import { Logo } from "@/components/Logo";
 import { router } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ResetPasswordScreen() {
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = () => {
+    if (password.length < 6) {
+      Alert.alert("Password must be at least 6 characters.");
+      return;
+    }
+    Alert.alert("Coming soon", "Password reset is not available yet.");
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <View className="flex-1 px-8 py-6 justify-center gap-y-8">
-        <Logo tagline="Choose a new password" />
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <View className="flex-1 px-8 py-6 justify-center gap-y-8">
+          <Logo tagline="Choose a new password" />
 
-        <View className="w-full gap-y-2">
-          <Text className="text-2xl font-bold text-text-primary">
-            Coming soon
-          </Text>
-          <Text className="text-base text-text-secondary">
-            Password reset isn't available yet. We'll let you know when it's
-            ready.
-          </Text>
+          <View className="w-full gap-y-4">
+            <InputField
+              label="New Password"
+              text={password}
+              onChangeText={setPassword}
+              type="password"
+            />
+            <BlockButton text="Update Password" onPress={handleSubmit} />
+          </View>
+
+          <Pressable onPress={() => router.back()}>
+            <Text className="text-sm font-semibold text-text-muted text-center">
+              Back
+            </Text>
+          </Pressable>
         </View>
-
-        <Pressable onPress={() => router.replace("/sign-in")}>
-          <Text className="text-sm font-semibold text-text-muted text-center">
-            Back to Sign In
-          </Text>
-        </Pressable>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

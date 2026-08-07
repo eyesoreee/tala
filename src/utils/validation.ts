@@ -6,12 +6,11 @@ type AuthFormValues = {
   email: string;
   password: string;
   displayName: string;
-  confirmPassword?: string;
 };
 
 export function getAuthValidationError(
   mode: AuthMode,
-  { email, password, displayName, confirmPassword }: AuthFormValues,
+  { email, password, displayName }: AuthFormValues,
 ): string | null {
   if (!email.trim()) return "Email is required.";
   if (!EMAIL_REGEX.test(email.trim())) return "Enter a valid email address.";
@@ -20,8 +19,6 @@ export function getAuthValidationError(
   if (mode === "createAccount") {
     if (password.length < 6) return "Password must be at least 6 characters.";
     if (!displayName.trim()) return "Display name is required.";
-    if (!confirmPassword) return "Confirm your password.";
-    if (confirmPassword !== password) return "Passwords do not match.";
   }
 
   return null;

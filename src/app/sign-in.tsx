@@ -24,18 +24,16 @@ export default function SignInScreen() {
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   const isSignIn = mode === "signIn";
 
   const { submitting, signIn, signUp } = useAuth();
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const validationError = getAuthValidationError(mode, {
       email,
       password,
       displayName,
-      confirmPassword,
     });
 
     if (validationError) {
@@ -43,12 +41,7 @@ export default function SignInScreen() {
       return;
     }
 
-    if (isSignIn) {
-      signIn(email.trim(), password);
-      return;
-    }
-
-    await signUp(email.trim(), password, displayName.trim());
+    isSignIn ? signIn(email, password) : signUp(email, password, displayName);
   };
 
   return (
@@ -90,15 +83,6 @@ export default function SignInScreen() {
                 type="password"
               />
 
-              {!isSignIn && (
-                <InputField
-                  label="Confirm Password"
-                  text={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                  type="password"
-                />
-              )}
-
               {isSignIn && (
                 <Pressable
                   className="self-end"
@@ -117,14 +101,7 @@ export default function SignInScreen() {
                 onPress={handleSubmit}
               />
               <LabeledDivider text="or" />
-              <BlockButton
-                text="Continue with Google"
-                variant="secondary"
-                disabled
-              />
-              <Text className="text-xs font-medium text-text-muted text-center">
-                Continue with Google is coming soon.
-              </Text>
+              <BlockButton text="Continue with Google" variant="secondary" />
             </View>
           </View>
 
