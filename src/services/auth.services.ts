@@ -20,6 +20,17 @@ class AuthService {
   async signOut() {
     return supabase.auth.signOut();
   }
+
+  async getSession() {
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error) {
+      console.error("Error getting session:", error.message);
+      return null;
+    }
+
+    return data.session;
+  }
 }
 
 export const authService = new AuthService();
