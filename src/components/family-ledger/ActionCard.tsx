@@ -35,10 +35,15 @@ export function ActionCard({
       onPress={onPress}
       className={cn(
         "w-full flex-row items-center gap-4 p-6 bg-surface border border-border rounded-xl active:opacity-80",
-        disabled && "opacity-50"
+        disabled && "opacity-50",
       )}
     >
-      <View className={cn("items-center justify-center size-16 rounded-3xl", tileBg)}>
+      <View
+        className={cn(
+          "items-center justify-center size-16 rounded-3xl",
+          tileBg,
+        )}
+      >
         <Ionicons name={icon} size={iconSize} color={iconColor} />
       </View>
 
