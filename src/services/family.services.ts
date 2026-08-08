@@ -62,45 +62,20 @@ class FamilyService {
       return { data: null, error: { message: "No authenticated user." } };
 
     await this.ensureCurrentUserProfile(userId);
-
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    console.log(
-      "USER ID:",
-      session?.user.id,
-      session?.user.id === userId,
-      userId,
-    );
-
-    const { data: family, error: familyError } = await supabase
-      .from("families")
-      .insert([{ name }])
-      .select("id, name, invite_code, created_at, updated_at")
-      .single();
-
-    if (familyError) return { data: null, error: familyError };
-
     const nickname = await this.getOwnerNickname(userId);
 
-    const { error: memberError } = await supabase
-      .from("family_members")
-      .insert([
-        {
-          family_id: family.id,
-          user_id: userId,
-          nickname,
-          role: "owner" as MemberRole,
-        },
-      ]);
+    const { data, error } = await supabase.rpc("create_family_and_owner", {
+      p_name: name,
+      p_nickname: nickname,
+    });
 
-    if (memberError) {
-      await supabase.from("families").delete().eq("id", family.id);
-      return { data: null, error: memberError };
-    }
+    if (error) return { data: null, error };
 
-    return { data: mapFamily(family), error: null };
+    const row = Array.isArray(data) ? data[0] : data;
+    if (!row)
+      return { data: null, error: { message: "Family creation failed." } };
+
+    return { data: mapFamily(row), error: null };
   }
 
   async joinFamily(inviteCode: string, nickname: string) {
@@ -110,13 +85,21 @@ class FamilyService {
 
     await this.ensureCurrentUserProfile(userId);
 
-    const { data: family, error: familyError } = await supabase
-      .from("families")
-      .select("id, name, invite_code, created_at, updated_at")
-      .eq("invite_code", inviteCode.trim().toUpperCase())
-      .maybeSingle();
+    const { data, error: resolveError } = await supabase.rpc(
+      "resolve_family_by_code",
+      { code: inviteCode.trim().toUpperCase() },
+    );
 
-    if (familyError) return { data: null, error: familyError };
+    if (resolveError) return { data: null, error: resolveError };
+
+    const family: {
+      id: string;
+      name: string;
+      invite_code: string;
+      created_at: string;
+      updated_at: string;
+    } | null = Array.isArray(data) ? data[0] : data;
+
     if (!family)
       return { data: null, error: { message: "Invalid invite code." } };
 
@@ -187,17 +170,6 @@ class FamilyService {
     });
 
     return { data: families, error: null };
-  }
-
-  async getFamilyByInviteCode(inviteCode: string) {
-    const { data, error } = await supabase
-      .from("families")
-      .select("id, name, invite_code, created_at, updated_at")
-      .eq("invite_code", inviteCode.trim().toUpperCase())
-      .maybeSingle();
-
-    if (error) return { data: null, error };
-    return { data: data ? mapFamily(data) : null, error: null };
   }
 
   async updateFamily(id: string, { name }: { name?: string }) {
