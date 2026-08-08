@@ -26,6 +26,18 @@ class FamilyService {
     return user?.id ?? null;
   }
 
+  private async ensureCurrentUserProfile(userId: string) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const displayName =
+      (user?.user_metadata?.display_name as string | undefined) ?? "New member";
+
+    await supabase
+      .from("profiles")
+      .upsert({ id: userId, display_name: displayName }, { onConflict: "id" });
+  }
+
   private async getOwnerNickname(userId: string): Promise<string> {
     const { data, error } = await supabase
       .from("profiles")
@@ -41,6 +53,19 @@ class FamilyService {
     const userId = await this.currentUserId();
     if (!userId)
       return { data: null, error: { message: "No authenticated user." } };
+
+    await this.ensureCurrentUserProfile(userId);
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    console.log(
+      "USER ID:",
+      session?.user.id,
+      session?.user.id === userId,
+      userId,
+    );
 
     const { data: family, error: familyError } = await supabase
       .from("families")
@@ -75,6 +100,8 @@ class FamilyService {
     const userId = await this.currentUserId();
     if (!userId)
       return { data: null, error: { message: "No authenticated user." } };
+
+    await this.ensureCurrentUserProfile(userId);
 
     const { data: family, error: familyError } = await supabase
       .from("families")

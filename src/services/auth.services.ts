@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { profileService } from "./profile.services";
 
 class AuthService {
   async signIn(email: string, password: string) {
@@ -6,7 +7,7 @@ class AuthService {
   }
 
   async signUp(email: string, password: string, displayName: string) {
-    return supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -15,6 +16,29 @@ class AuthService {
         },
       },
     });
+
+    if (error) return { data, error };
+
+    if (!data.user) {
+      return {
+        data,
+        error: { message: "Account was created, but no user was returned." },
+      };
+    }
+
+    const { error: profileError } = await profileService.insert(
+      displayName,
+      null,
+    );
+
+    if (profileError) {
+      return {
+        data,
+        error: profileError,
+      };
+    }
+
+    return { data, error: null };
   }
 
   async signOut() {

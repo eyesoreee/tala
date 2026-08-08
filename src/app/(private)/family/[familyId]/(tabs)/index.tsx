@@ -5,7 +5,9 @@ export default function HomeTabScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-1 items-center justify-center">
-        <Text className="text-2xl font-bold text-text-primary">Home</Text>
+        <Text className="text-2xl font-bold text-text-primary">
+          This is the dashboard screen
+        </Text>
       </View>
     </SafeAreaView>
   );
