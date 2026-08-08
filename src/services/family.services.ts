@@ -1,6 +1,13 @@
 import { MemberRole } from "@/constants/enums";
-import { Family } from "@/constants/family";
+import { Family, FamilyDTO } from "@/constants/family";
+import { FamilyMemberDTO } from "@/constants/family-member";
 import { supabase } from "@/lib/supabase";
+
+interface FamilyMembershipRow {
+  role: MemberRole;
+  family_id: string;
+  families: FamilyDTO | FamilyDTO[] | null;
+}
 
 function mapFamily(row: {
   id: string;
@@ -153,6 +160,33 @@ class FamilyService {
 
     if (error) return { data: null, error };
     return { data: data ? mapFamily(data) : null, error: null };
+  }
+
+  async getUserFamilies(userId: string) {
+    const { data, error } = await supabase
+      .from("family_members")
+      .select("role, family_id, families(id, name, invite_code)")
+      .eq("user_id", userId)
+      .is("deleted_at", null)
+      .order("joined_at", { ascending: false });
+
+    if (error) return { data: null, error };
+
+    const families: FamilyMemberDTO[] = (
+      (data ?? []) as FamilyMembershipRow[]
+    ).map((row) => {
+      const family = Array.isArray(row.families)
+        ? row.families[0]
+        : row.families;
+      return {
+        id: family?.id ?? row.family_id,
+        name: family?.name ?? "Family",
+        inviteCode: family?.invite_code ?? "",
+        role: row.role,
+      };
+    });
+
+    return { data: families, error: null };
   }
 
   async getFamilyByInviteCode(inviteCode: string) {

@@ -5,3 +5,9 @@ export interface Family {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface FamilyDTO {
+  id: string;
+  name: string;
+  invite_code: string;
+}

@@ -9,3 +9,10 @@ export interface FamilyMember {
   joinedAt: string;
   deletedAt: string | null;
 }
+
+export interface FamilyMemberDTO {
+  id: string;
+  name: string;
+  inviteCode: string;
+  role: MemberRole;
+}
