@@ -12,6 +12,7 @@ export default function PrivateLayout() {
         headerShown: false,
       }}
     >
+      <Stack.Screen name="family-ledger" />
       <Stack.Screen name="create-family" options={{ presentation: "modal" }} />
       <Stack.Screen name="join-family" options={{ presentation: "modal" }} />
     </Stack>
