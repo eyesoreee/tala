@@ -2,27 +2,43 @@ import { View } from "react-native";
 import SectionHeader from "./SectionHeader";
 import SnapshotCard from "./SnapshotCard";
 
-export default function MonthlySnapshot() {
+interface MonthlySnapshotProps {
+  monthLabel: string;
+  totalSpent: string;
+  youPaid: string;
+  youOwe: string;
+  othersOweYou: string;
+  onThisMonthPress?: () => void;
+}
+
+export default function MonthlySnapshot({
+  monthLabel,
+  totalSpent,
+  youPaid,
+  youOwe,
+  othersOweYou,
+  onThisMonthPress,
+}: MonthlySnapshotProps) {
   return (
     <View className="gap-4">
       <SectionHeader
-        title="August Snapshot"
+        title={monthLabel}
         actionLabel="This month"
-        onPress={() => {}}
+        onPress={onThisMonthPress}
       />
 
       <View className="gap-2">
         <View className="flex-row gap-2">
           <SnapshotCard
             label="Total Spent"
-            value="P18,540"
+            value={totalSpent}
             cardColor="bg-primary-container"
             textColor="text-on-primary-container"
           />
 
           <SnapshotCard
             label="You paid"
-            value="P6,200"
+            value={youPaid}
             cardColor="bg-primary-container"
             textColor="text-on-primary-container"
           />
@@ -31,16 +47,16 @@ export default function MonthlySnapshot() {
         <View className="flex-row gap-2">
           <SnapshotCard
             label="You owe"
-            value="P950"
-            cardColor="bg-primary-container"
-            textColor="text-on-primary-container"
+            value={youOwe}
+            cardColor="bg-tint-red"
+            textColor="text-negative"
           />
 
           <SnapshotCard
             label="Owed to you"
-            value="P1,400"
-            cardColor="bg-primary-container"
-            textColor="text-on-primary-container"
+            value={othersOweYou}
+            cardColor="bg-tint-blue"
+            textColor="text-accent"
           />
         </View>
       </View>

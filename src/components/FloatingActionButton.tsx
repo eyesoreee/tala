@@ -2,7 +2,13 @@ import { colors } from "@/constants/colors";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
 import { Pressable } from "react-native";
 
-export default function FloatingActionButton() {
+interface FloatingActionButtonProps {
+  onPress?: () => void;
+}
+
+export default function FloatingActionButton({
+  onPress,
+}: FloatingActionButtonProps) {
   return (
     <Pressable
       className="
@@ -17,9 +23,7 @@ export default function FloatingActionButton() {
         justify-center
         active:opacity-70
       "
-      onPress={() => {
-        // Add expense
-      }}
+      onPress={onPress}
     >
       <Ionicons name="add" size={28} color={colors.onPrimary} />
     </Pressable>
