@@ -1,7 +1,7 @@
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import MonthlySnapshot from "@/components/dashboard/MonthlySnapshot";
+import RecentExpenses from "@/components/dashboard/RecentExpenses";
 import FloatingActionButton from "@/components/FloatingActionButton";
-import DashboardHeader from "@/components/family/DashboardHeader";
-import MonthlySnapshot from "@/components/family/MonthlySnapshot";
-import RecentExpenses from "@/components/family/RecentExpenses";
 import { colors } from "@/constants/colors";
 import { useDashboard } from "@/hooks/useDashboard";
 import {
