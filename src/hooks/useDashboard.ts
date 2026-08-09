@@ -50,9 +50,8 @@ export function useDashboard() {
     let youPaid = 0;
 
     for (const expense of expenses) {
-      if (monthKey(new Date(expense.expenseDate)) !== currentMonth) {
-        continue;
-      }
+      const tempMonth = monthKey(new Date(expense.expenseDate));
+      if (tempMonth !== currentMonth) continue;
 
       totalSpent += expense.amount;
 
@@ -61,10 +60,7 @@ export function useDashboard() {
       }
     }
 
-    return {
-      totalSpent,
-      youPaid,
-    };
+    return { totalSpent, youPaid };
   }, [expenses, myMemberId]);
 
   const recentItems = useMemo<RecentExpenseItem[]>(

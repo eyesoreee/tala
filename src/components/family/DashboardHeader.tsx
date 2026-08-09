@@ -25,7 +25,7 @@ export default function DashboardHeader({
         </Text>
       </View>
 
-      <Pressable className="bg-primary-container rounded-full p-4 items-center justify-center active:opacity-70">
+      <Pressable className="bg-primary-container rounded-full w-11 h-11 items-center justify-center active:opacity-70">
         <Text className="font-bold text-on-primary-container">{initials}</Text>
       </Pressable>
     </View>
