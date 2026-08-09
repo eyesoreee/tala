@@ -1,6 +1,9 @@
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import "../../global.css";
+
+const queryClient = new QueryClient();
 
 function RootNavigator() {
   const { session, initializing } = useAuth();
@@ -22,8 +25,10 @@ function RootNavigator() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <RootNavigator />
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RootNavigator />
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
