@@ -2,19 +2,19 @@ import { colors } from "@/constants/colors";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
 import { Text, View } from "react-native";
 
-interface ExpenseListItemProps {
+interface RecentExpenseListItemProps {
   initial: string;
   title: string;
   subtitle: string;
   amount: string;
 }
 
-export default function ExpenseListItem({
+export default function RecentExpenseListItem({
   initial,
   title,
   subtitle,
   amount,
-}: ExpenseListItemProps) {
+}: RecentExpenseListItemProps) {
   return (
     <View className="flex-row items-center py-4">
       <View className="w-12 h-12 rounded-full bg-secondary-container items-center justify-center">

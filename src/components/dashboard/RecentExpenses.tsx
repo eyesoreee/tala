@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import ExpenseListItem from "./ExpenseListItem";
+import RecentExpenseListItem from "./RecentExpenseListItem";
 import SectionHeader from "./SectionHeader";
 
 export interface RecentExpenseItem {
@@ -35,7 +35,7 @@ export default function RecentExpenses({
           items.map((item, index) => (
             <View key={index}>
               {index > 0 && <View className="h-px bg-outline-variant" />}
-              <ExpenseListItem
+              <RecentExpenseListItem
                 initial={item.initial}
                 title={item.title}
                 subtitle={item.subtitle}
