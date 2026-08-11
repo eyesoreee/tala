@@ -1,4 +1,4 @@
-const SHORT_MONTHS = [
+export const SHORT_MONTHS = [
   "Jan",
   "Feb",
   "Mar",
@@ -28,10 +28,13 @@ const FULL_MONTHS = [
   "December",
 ];
 
-export function formatPeso(value: number): string {
+export function formatNumber(value: number): string {
   const rounded = Math.round(value);
-  const formatted = rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return `₱${formatted}`;
+  return rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+export function formatPeso(value: number): string {
+  return `₱${formatNumber(value)}`;
 }
 
 export function formatShortDate(iso: string): string {
@@ -45,6 +48,10 @@ export function formatFullDate(date: Date): string {
 
 export function currentMonthLabel(): string {
   return `${FULL_MONTHS[new Date().getMonth()]} Snapshot`;
+}
+
+export function formatMonthYear(date: Date): string {
+  return `${FULL_MONTHS[date.getMonth()]} ${date.getFullYear()}`;
 }
 
 export function getInitials(name: string): string {
