@@ -101,6 +101,12 @@ export function useDashboard() {
     router.push(`/family/${familyId}/add-expense`);
   }, [familyId]);
 
+  const openProfile = useCallback(() => {
+    if (!familyId) return;
+
+    router.push(`/family/${familyId}/profile`);
+  }, [familyId]);
+
   return {
     familyName,
     nickname,
@@ -121,5 +127,6 @@ export function useDashboard() {
     refresh,
     goToExpenses,
     openAddExpense,
+    openProfile,
   };
 }

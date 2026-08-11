@@ -214,7 +214,9 @@ export default function ExpensesTabScreen() {
           ) : (
             <View className="mt-4 bg-surface rounded-3xl px-6">
               <Text className="py-10 text-center text-sm text-text-faint">
-                No expenses yet. Tap + to add your first one.
+                {expenses.length > 0
+                  ? `No expenses in ${formatMonthYear(visibleMonth)}.`
+                  : "No expenses yet. Tap + to add your first one."}
               </Text>
             </View>
           )

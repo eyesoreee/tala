@@ -1,9 +1,12 @@
+import AccountMenu from "@/components/dashboard/AccountMenu";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import MonthlySnapshot from "@/components/dashboard/MonthlySnapshot";
 import RecentExpenses from "@/components/dashboard/RecentExpenses";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import { colors } from "@/constants/colors";
+import { useAuth } from "@/contexts/AuthContext";
 import { useDashboard } from "@/hooks/useDashboard";
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   RefreshControl,
@@ -13,6 +16,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeTabScreen() {
+  const { signOut } = useAuth();
   const {
     familyName,
     nickname,
@@ -28,7 +32,17 @@ export default function HomeTabScreen() {
     refresh,
     goToExpenses,
     openAddExpense,
+    openProfile,
   } = useDashboard();
+
+  const [accountMenuVisible, setAccountMenuVisible] = useState(false);
+
+  const onAvatarPress = useCallback(() => setAccountMenuVisible(true), []);
+
+  const onSignOut = useCallback(() => {
+    setAccountMenuVisible(false);
+    void signOut();
+  }, [signOut]);
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -50,6 +64,7 @@ export default function HomeTabScreen() {
               nickname={nickname}
               familyName={familyName}
               initials={initials}
+              onAvatarPress={onAvatarPress}
             />
 
             <MonthlySnapshot
@@ -67,6 +82,16 @@ export default function HomeTabScreen() {
       </ScrollView>
 
       <FloatingActionButton onPress={openAddExpense} />
+
+      <AccountMenu
+        visible={accountMenuVisible}
+        nickname={nickname}
+        initials={initials}
+        familyName={familyName}
+        onClose={() => setAccountMenuVisible(false)}
+        onGoToProfile={openProfile}
+        onSignOut={onSignOut}
+      />
     </SafeAreaView>
   );
 }
