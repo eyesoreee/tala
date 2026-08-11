@@ -1,3 +1,4 @@
+import { Expense } from "@/constants/expense";
 import { Text, View } from "react-native";
 import RecentExpenseListItem from "./RecentExpenseListItem";
 import SectionHeader from "./SectionHeader";
@@ -7,16 +8,19 @@ export interface RecentExpenseItem {
   title: string;
   subtitle: string;
   amount: string;
+  expense: Expense;
 }
 
 interface RecentExpensesProps {
   items: RecentExpenseItem[];
   onViewAll?: () => void;
+  onExpensePress?: (expense: Expense) => void;
 }
 
 export default function RecentExpenses({
   items,
   onViewAll,
+  onExpensePress,
 }: RecentExpensesProps) {
   return (
     <View className="gap-4">
@@ -40,6 +44,11 @@ export default function RecentExpenses({
                 title={item.title}
                 subtitle={item.subtitle}
                 amount={item.amount}
+                onViewDetails={
+                  onExpensePress
+                    ? () => onExpensePress(item.expense)
+                    : undefined
+                }
               />
             </View>
           ))

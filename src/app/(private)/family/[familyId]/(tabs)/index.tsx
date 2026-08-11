@@ -2,8 +2,10 @@ import AccountMenu from "@/components/dashboard/AccountMenu";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import MonthlySnapshot from "@/components/dashboard/MonthlySnapshot";
 import RecentExpenses from "@/components/dashboard/RecentExpenses";
+import ExpenseDetailModal from "@/components/expenses/ExpenseDetailModal";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import { colors } from "@/constants/colors";
+import { Expense } from "@/constants/expense";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useCallback, useState } from "react";
@@ -29,6 +31,7 @@ export default function HomeTabScreen() {
     youOwe,
     othersOweYou,
     recentItems,
+    members,
     refresh,
     goToExpenses,
     openAddExpense,
@@ -36,6 +39,7 @@ export default function HomeTabScreen() {
   } = useDashboard();
 
   const [accountMenuVisible, setAccountMenuVisible] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
 
   const onAvatarPress = useCallback(() => setAccountMenuVisible(true), []);
 
@@ -76,12 +80,22 @@ export default function HomeTabScreen() {
               onThisMonthPress={goToExpenses}
             />
 
-            <RecentExpenses items={recentItems} onViewAll={goToExpenses} />
+            <RecentExpenses
+              items={recentItems}
+              onViewAll={goToExpenses}
+              onExpensePress={setSelectedExpense}
+            />
           </>
         )}
       </ScrollView>
 
       <FloatingActionButton onPress={openAddExpense} />
+
+      <ExpenseDetailModal
+        expense={selectedExpense}
+        members={members}
+        onClose={() => setSelectedExpense(null)}
+      />
 
       <AccountMenu
         visible={accountMenuVisible}

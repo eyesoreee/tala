@@ -1,4 +1,5 @@
 import ExpenseCard from "@/components/expenses/ExpenseCard";
+import ExpenseDetailModal from "@/components/expenses/ExpenseDetailModal";
 import ExpenseHeader from "@/components/expenses/ExpenseHeader";
 import MonthYearPicker from "@/components/expenses/MonthYearPicker";
 import SearchFilterSection from "@/components/expenses/SearchFilterSection";
@@ -52,6 +53,7 @@ export default function ExpensesTabScreen() {
     () => new Date(new Date().getFullYear(), new Date().getMonth(), 1),
   );
   const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
 
   const membersById = useMemo(
     () => new Map(members.map((member) => [member.id, member])),
@@ -202,6 +204,7 @@ export default function ExpensesTabScreen() {
                 amount={formatNumber(item.amount)}
                 category={item.category as CATEGORIES}
                 paidBy={payer}
+                onExpenseClick={() => setSelectedExpense(item)}
               />
             </View>
           );
@@ -224,6 +227,12 @@ export default function ExpensesTabScreen() {
         refreshControl={
           <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
         }
+      />
+
+      <ExpenseDetailModal
+        expense={selectedExpense}
+        members={members}
+        onClose={() => setSelectedExpense(null)}
       />
     </SafeAreaView>
   );

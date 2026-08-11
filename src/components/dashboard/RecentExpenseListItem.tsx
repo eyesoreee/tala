@@ -1,12 +1,13 @@
 import { colors } from "@/constants/colors";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 interface RecentExpenseListItemProps {
   initial: string;
   title: string;
   subtitle: string;
   amount: string;
+  onViewDetails?: () => void;
 }
 
 export default function RecentExpenseListItem({
@@ -14,9 +15,13 @@ export default function RecentExpenseListItem({
   title,
   subtitle,
   amount,
+  onViewDetails,
 }: RecentExpenseListItemProps) {
   return (
-    <View className="flex-row items-center py-4">
+    <Pressable
+      onPress={onViewDetails}
+      className="flex-row items-center py-4 active:opacity-70"
+    >
       <View className="w-12 h-12 rounded-full bg-secondary-container items-center justify-center">
         <Text className="font-bold text-on-secondary-container">{initial}</Text>
       </View>
@@ -32,6 +37,6 @@ export default function RecentExpenseListItem({
 
         <Ionicons name="chevron-forward" size={20} color={colors.outline} />
       </View>
-    </View>
+    </Pressable>
   );
 }

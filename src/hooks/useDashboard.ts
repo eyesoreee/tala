@@ -74,6 +74,7 @@ export function useDashboard() {
           title: expense.title,
           subtitle: `${name} · ${formatShortDate(expense.expenseDate)}`,
           amount: formatPeso(expense.amount),
+          expense,
         };
       }),
     [expenses, membersById],
@@ -123,6 +124,7 @@ export function useDashboard() {
 
     monthLabel: currentMonthLabel(),
     recentItems,
+    members,
 
     refresh,
     goToExpenses,
