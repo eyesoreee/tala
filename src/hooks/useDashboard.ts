@@ -92,7 +92,7 @@ export function useDashboard() {
   const goToExpenses = useCallback(() => {
     if (!familyId) return;
 
-    router.push(`/family/${familyId}/expenses`);
+    router.navigate(`/family/${familyId}/expenses`);
   }, [familyId]);
 
   const openAddExpense = useCallback(() => {
@@ -104,7 +104,7 @@ export function useDashboard() {
   const openProfile = useCallback(() => {
     if (!familyId) return;
 
-    router.push(`/family/${familyId}/profile`);
+    router.navigate(`/family/${familyId}/profile`);
   }, [familyId]);
 
   return {

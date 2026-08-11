@@ -15,7 +15,7 @@ import {
   monthKey,
 } from "@/utils/format";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
-import { useLocalSearchParams } from "expo-router";
+import { useGlobalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -34,7 +34,7 @@ interface ExpenseGroup {
 }
 
 export default function ExpensesTabScreen() {
-  const { familyId } = useLocalSearchParams<{ familyId: string }>();
+  const { familyId } = useGlobalSearchParams<{ familyId: string }>();
 
   const {
     data: expenses = [],
