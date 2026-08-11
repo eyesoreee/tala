@@ -1,6 +1,6 @@
-import { supabase } from "@/lib/supabase";
-import { Expense } from "@/constants/expense";
 import { Category } from "@/constants/enums";
+import { Expense } from "@/constants/expense";
+import { supabase } from "@/lib/supabase";
 import { familyMemberService } from "@/services/family-member.services";
 
 type ExpenseRow = {
@@ -40,6 +40,19 @@ function mapExpense(row: ExpenseRow): Expense {
     updatedAt: row.updated_at,
     deletedAt: row.deleted_at,
   };
+}
+
+export interface CreateExpenseInput {
+  familyId: string;
+  paidByMemberId: string;
+  title: string;
+  amount: number;
+  category: Category;
+  expenseDate: string;
+  reimbursementRequired: boolean;
+  notes?: string | null;
+  receiptUrl?: string | null;
+  shareMemberIds?: string[];
 }
 
 class ExpenseService {
@@ -86,17 +99,7 @@ class ExpenseService {
     return { data: (data ?? []).map(mapExpense), error: null };
   }
 
-  async createExpense(input: {
-    familyId: string;
-    paidByMemberId: string;
-    title: string;
-    amount: number;
-    category: Category;
-    expenseDate: string;
-    reimbursementRequired: boolean;
-    notes?: string | null;
-    receiptUrl?: string | null;
-  }) {
+  async createExpense(input: CreateExpenseInput) {
     const userId = await this.currentUserId();
     if (!userId)
       return { data: null, error: { message: "No authenticated user." } };
@@ -130,6 +133,26 @@ class ExpenseService {
       .single();
 
     if (expenseError) return { data: null, error: expenseError };
+
+    if (input.shareMemberIds !== undefined) {
+      if (input.shareMemberIds.length > 0) {
+        const shareRows = input.shareMemberIds.map((memberId) => ({
+          expense_id: expense.id,
+          member_id: memberId,
+        }));
+
+        const { error: shareError } = await supabase
+          .from("expense_shares")
+          .insert(shareRows);
+
+        if (shareError) {
+          await supabase.from("expenses").delete().eq("id", expense.id);
+          return { data: null, error: shareError };
+        }
+      }
+
+      return { data: mapExpense(expense), error: null };
+    }
 
     const { data: members, error: membersError } =
       await familyMemberService.getMembers(input.familyId);
@@ -179,7 +202,8 @@ class ExpenseService {
     if (partial.reimbursementRequired !== undefined)
       payload.reimbursement_required = partial.reimbursementRequired;
     if (partial.notes !== undefined) payload.notes = partial.notes;
-    if (partial.receiptUrl !== undefined) payload.receipt_url = partial.receiptUrl;
+    if (partial.receiptUrl !== undefined)
+      payload.receipt_url = partial.receiptUrl;
 
     if (Object.keys(payload).length === 0)
       return { data: null, error: { message: "Nothing to update." } };

@@ -1,4 +1,4 @@
-import { RecentExpenseItem } from "@/components/family/RecentExpenses";
+import { RecentExpenseItem } from "@/components/dashboard/RecentExpenses";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExpenses } from "@/hooks/useExpenses";
 import { useFamily } from "@/hooks/useFamily";
@@ -24,8 +24,8 @@ export function useDashboard() {
   const expensesQuery = useExpenses(familyId);
 
   const familyName = familyQuery.data?.name ?? "";
-  const members = membersQuery.data ?? [];
-  const expenses = expensesQuery.data ?? [];
+  const { data: members = [] } = membersQuery;
+  const { data: expenses = [] } = expensesQuery;
 
   const loading =
     familyQuery.isLoading || membersQuery.isLoading || expensesQuery.isLoading;

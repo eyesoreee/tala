@@ -1,11 +1,23 @@
 import { BlockButton } from "@/components/BlockButton";
+import { LoadingOverlay } from "@/components/LoadingOVerlay";
 import { ModalHeader } from "@/components/ModalHeader";
 import { CATEGORIES } from "@/constants/categories";
 import { colors } from "@/constants/colors";
+import { Category } from "@/constants/enums";
+import { useAuth } from "@/contexts/AuthContext";
+import { useCreateExpense } from "@/hooks/useCreateExpense";
+import { useFamilyMembers } from "@/hooks/useFamilyMembers";
+import { formatFullDate } from "@/utils/format";
+import DateTimePicker, {
+  DateTimePickerChangeEvent,
+} from "@react-native-community/datetimepicker";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
 import { Checkbox } from "expo-checkbox";
-import { useEffect, useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -16,38 +28,109 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-interface DummyData {
-  name: string;
-  isCheck: boolean;
-}
-
 export default function AddExpenseScreen() {
-  const categories = Object.values(CATEGORIES);
-  const [selectedCategory, onSelectCategory] = useState<CATEGORIES>(
-    CATEGORIES.ALL,
-  );
-  const [members, setMembers] = useState<DummyData[]>([]);
-  const [selectedMember, onSelectMember] = useState<DummyData>(members[3]);
+  const { familyId } = useLocalSearchParams<{ familyId: string }>();
+  const { session } = useAuth();
 
+  const {
+    data: members = [],
+    isLoading: membersLoading,
+    error: membersError,
+  } = useFamilyMembers(familyId);
+
+  const categories = useMemo(
+    () => Object.values(CATEGORIES).filter((c) => c !== CATEGORIES.ALL),
+    [],
+  );
+
+  const myMemberId =
+    members.find((member) => member.userId === session?.user.id)?.id ?? null;
+  const allMemberIds = useMemo(
+    () => members.map((member) => member.id),
+    [members],
+  );
+
+  const [amount, setAmount] = useState("");
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState<Category>(CATEGORIES.GROCERIES);
+  const [paidByMemberId, setPaidByMemberId] = useState<string | null>(null);
   const [isEnabled, setIsEnabled] = useState(false);
+  const [beneficiaryIds, setBeneficiaryIds] = useState<string[] | null>(null);
+  const [expenseDate, setExpenseDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [notes, setNotes] = useState("");
+
+  const createExpense = useCreateExpense();
 
   useEffect(() => {
-    setMembers([
-      { name: "Dad", isCheck: false },
-      { name: "Mom", isCheck: false },
-      { name: "Me", isCheck: false },
-      { name: "Brother", isCheck: false },
-    ]);
+    if (createExpense.isError) {
+      Alert.alert(
+        "Save failed",
+        createExpense.error?.message ?? "Something went wrong.",
+      );
+    }
+  }, [createExpense.isError, createExpense.error]);
 
-    console.log(selectedMember);
-  }, []);
+  useEffect(() => {
+    if (createExpense.isSuccess) {
+      router.back();
+    }
+  }, [createExpense.isSuccess]);
 
-  const toggleMember = (name: string) => {
-    setMembers((prevMembers) =>
-      prevMembers.map((member) =>
-        member.name === name ? { ...member, isCheck: !member.isCheck } : member,
-      ),
-    );
+  const payer = paidByMemberId ?? myMemberId;
+
+  const toggleReimbursement = () => {
+    setIsEnabled((prev) => !prev);
+    setBeneficiaryIds(null);
+  };
+
+  const toggleBeneficiary = (memberId: string) => {
+    setBeneficiaryIds((prev) => {
+      const current = prev ?? allMemberIds;
+      return current.includes(memberId)
+        ? current.filter((id) => id !== memberId)
+        : [...current, memberId];
+    });
+  };
+
+  const isBeneficiary = (memberId: string) =>
+    (beneficiaryIds ?? allMemberIds).includes(memberId);
+
+  const onDateValueChange = (_event: DateTimePickerChangeEvent, date: Date) => {
+    setExpenseDate(date);
+    if (Platform.OS === "android") {
+      setShowDatePicker(false);
+    }
+  };
+
+  const onDateDismiss = () => {
+    if (Platform.OS === "android") {
+      setShowDatePicker(false);
+    }
+  };
+
+  const amountValue = Number(amount);
+  const canSave =
+    title.trim().length > 0 &&
+    Number.isFinite(amountValue) &&
+    amountValue > 0 &&
+    !!payer &&
+    members.length > 0;
+
+  const handleSave = () => {
+    if (!canSave || !payer) return;
+
+    createExpense.mutate({
+      familyId,
+      paidByMemberId: payer,
+      title: title.trim(),
+      amount: amountValue,
+      category,
+      expenseDate: expenseDate.toISOString(),
+      reimbursementRequired: isEnabled,
+      notes: notes.trim() || null,
+      shareMemberIds: isEnabled ? (beneficiaryIds ?? allMemberIds) : [],
+    });
   };
 
   return (
@@ -70,9 +153,14 @@ export default function AddExpenseScreen() {
               <Text className="font-bold text-2xl text-on-primary-container">
                 P
               </Text>
-              <Text className="text-on-primary-container/40 font-bold text-6xl">
-                0.00
-              </Text>
+              <TextInput
+                value={amount}
+                onChangeText={setAmount}
+                placeholder="0.00"
+                placeholderTextColor={colors.onPrimaryContainer + "66"}
+                keyboardType="decimal-pad"
+                className="text-on-primary-container/40 font-bold text-6xl w-48 text-center p-0"
+              />
             </View>
           </View>
 
@@ -80,7 +168,11 @@ export default function AddExpenseScreen() {
             <Text className="text-primary font-medium">Title</Text>
 
             <View className="bg-surface rounded-lg px-2">
-              <TextInput placeholder="What was this for?" />
+              <TextInput
+                value={title}
+                onChangeText={setTitle}
+                placeholder="What was this for?"
+              />
             </View>
           </View>
 
@@ -88,18 +180,18 @@ export default function AddExpenseScreen() {
             <Text className="text-primary font-medium">Category</Text>
 
             <View className="flex-row flex-wrap gap-3">
-              {categories.map((category, idx) => {
-                const isSelected = categories[idx] === selectedCategory;
+              {categories.map((item) => {
+                const isSelected = item === category;
                 return (
                   <Pressable
-                    key={category}
+                    key={item}
                     className={`${isSelected ? "bg-primary" : "bg-primary-container"} rounded-full active:opacity-70 py-2 px-4 self-start`}
-                    onPress={() => onSelectCategory(category)}
+                    onPress={() => setCategory(item)}
                   >
                     <Text
                       className={`${isSelected ? "text-on-primary" : "text-on-primary-container"}`}
                     >
-                      {category}
+                      {item}
                     </Text>
                   </Pressable>
                 );
@@ -109,38 +201,48 @@ export default function AddExpenseScreen() {
 
           <View className="gap-2">
             <Text className="text-primary font-medium">Paid by</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerClassName="gap-4"
-            >
-              {members.map((member, idx) => {
-                const isSelected = members[idx] === selectedMember;
 
-                return (
-                  <Pressable
-                    key={idx}
-                    className="items-center gap-1 active:opacity-70"
-                    onPress={() => {
-                      onSelectMember(member);
-                    }}
-                  >
-                    <View
-                      className={`${isSelected ? "border-2 border-primary" : ""} bg-primary-container rounded-full w-12 h-12 items-center justify-center`}
+            {membersError && (
+              <Text className="text-error text-sm">
+                Could not load family members.
+              </Text>
+            )}
+
+            {membersLoading ? (
+              <View className="py-8 items-center justify-center">
+                <ActivityIndicator size="small" color={colors.primary} />
+              </View>
+            ) : (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerClassName="gap-4"
+              >
+                {members.map((member) => {
+                  const isSelected = member.id === payer;
+                  return (
+                    <Pressable
+                      key={member.id}
+                      className="items-center gap-1 active:opacity-70"
+                      onPress={() => setPaidByMemberId(member.id)}
                     >
-                      <Text className="font-bold text-on-primary-container">
-                        {member.name[0]}
+                      <View
+                        className={`${isSelected ? "border-2 border-primary" : ""} bg-primary-container rounded-full w-12 h-12 items-center justify-center`}
+                      >
+                        <Text className="font-bold text-on-primary-container">
+                          {member.nickname[0]}
+                        </Text>
+                      </View>
+                      <Text
+                        className={`${isSelected ? "text-primary font-semibold" : "text-on-background/80"}`}
+                      >
+                        {member.nickname}
                       </Text>
-                    </View>
-                    <Text
-                      className={`${isSelected ? "text-primary font-semibold" : "text-on-background/80"}`}
-                    >
-                      {member.name}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+            )}
           </View>
 
           <View className="flex-row items-center justify-between">
@@ -156,13 +258,13 @@ export default function AddExpenseScreen() {
             <View className="flex-row bg-primary-container py-1 px-1 rounded-full">
               <Pressable
                 className={`${!isEnabled ? "bg-surface rounded-full" : ""} py-1 px-3`}
-                onPress={() => setIsEnabled(!isEnabled)}
+                onPress={toggleReimbursement}
               >
                 <Text className="text-primary">No</Text>
               </Pressable>
               <Pressable
                 className={`${isEnabled ? "bg-surface rounded-full" : ""} py-1 px-3`}
-                onPress={() => setIsEnabled(!isEnabled)}
+                onPress={toggleReimbursement}
               >
                 <Text className="text-primary">Yes</Text>
               </Pressable>
@@ -177,21 +279,21 @@ export default function AddExpenseScreen() {
                 Who benefited?
               </Text>
 
-              {members.map((member, idx) => {
+              {members.map((member) => {
                 return (
-                  <View key={idx} className="items-center gap-2 flex-row">
+                  <View key={member.id} className="items-center gap-2 flex-row">
                     <Checkbox
-                      value={member.isCheck}
-                      onValueChange={() => toggleMember(member.name)}
+                      value={isBeneficiary(member.id)}
+                      onValueChange={() => toggleBeneficiary(member.id)}
                     />
 
                     <View className="bg-primary-container rounded-full w-12 h-12 items-center justify-center">
                       <Text className="font-bold text-on-primary-container">
-                        {member.name[0]}
+                        {member.nickname[0]}
                       </Text>
                     </View>
                     <Text className="text-on-background font-medium">
-                      {member.name}
+                      {member.nickname}
                     </Text>
                   </View>
                 );
@@ -202,12 +304,14 @@ export default function AddExpenseScreen() {
           <View className="gap-2">
             <Text className="text-primary font-medium">Date</Text>
             <Pressable
-              onPress={() => {}}
+              onPress={() => setShowDatePicker(true)}
               className="active:opacity-70 flex-row items-center justify-between bg-surface p-4 rounded-xl"
             >
               <View className="flex-row items-center gap-2">
                 <Ionicons name="calendar" color={colors.primary} size={20} />
-                <Text className="text-on-surface">August 3, 2026</Text>
+                <Text className="text-on-surface">
+                  {formatFullDate(expenseDate)}
+                </Text>
               </View>
 
               <Ionicons
@@ -216,6 +320,26 @@ export default function AddExpenseScreen() {
                 size={20}
               />
             </Pressable>
+
+            {showDatePicker && (
+              <View>
+                {Platform.OS === "ios" && (
+                  <Pressable
+                    onPress={() => setShowDatePicker(false)}
+                    className="self-end py-1 px-2"
+                  >
+                    <Text className="text-primary font-semibold">Done</Text>
+                  </Pressable>
+                )}
+                <DateTimePicker
+                  value={expenseDate}
+                  mode="date"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onValueChange={onDateValueChange}
+                  onDismiss={onDateDismiss}
+                />
+              </View>
+            )}
           </View>
 
           <View className="gap-2">
@@ -226,6 +350,8 @@ export default function AddExpenseScreen() {
 
             <View className="bg-surface rounded-lg px-3 py-2 h-32">
               <TextInput
+                value={notes}
+                onChangeText={setNotes}
                 placeholder="Add a little context"
                 multiline={true}
                 numberOfLines={4}
@@ -255,9 +381,15 @@ export default function AddExpenseScreen() {
             </Pressable>
           </View>
 
-          <BlockButton text="Save expense" onPress={() => {}} />
+          <BlockButton
+            text="Save expense"
+            onPress={handleSave}
+            disabled={!canSave || createExpense.isPending}
+          />
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {createExpense.isPending && <LoadingOverlay />}
     </SafeAreaView>
   );
 }

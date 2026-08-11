@@ -39,6 +39,10 @@ export function formatShortDate(iso: string): string {
   return `${SHORT_MONTHS[date.getMonth()]} ${date.getDate()}`;
 }
 
+export function formatFullDate(date: Date): string {
+  return `${FULL_MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+}
+
 export function currentMonthLabel(): string {
   return `${FULL_MONTHS[new Date().getMonth()]} Snapshot`;
 }
