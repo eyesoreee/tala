@@ -1,10 +1,14 @@
+import SettleModal from "@/components/balances/SettleModal";
 import { CATEGORIES } from "@/constants/categories";
 import { colors } from "@/constants/colors";
 import { Expense } from "@/constants/expense";
 import { FamilyMember } from "@/constants/family-member";
+import { useAuth } from "@/contexts/AuthContext";
 import { useExpenseShares } from "@/hooks/useExpenseShares";
+import { useSettlements } from "@/hooks/useSettlements";
 import { formatFullDate, formatNumber, getInitials } from "@/utils/format";
-import { useMemo } from "react";
+import { useGlobalSearchParams } from "expo-router";
+import { useMemo, useState } from "react";
 import { ActivityIndicator, Modal, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CategoryChip from "./CategoryChip";
@@ -21,33 +25,77 @@ export default function ExpenseDetailModal({
   onClose,
 }: ExpenseDetailModalProps) {
   const insets = useSafeAreaInsets();
+  const { familyId } = useGlobalSearchParams<{ familyId: string }>();
+  const { session } = useAuth();
 
   const { data: shares = [], isLoading } = useExpenseShares(expense?.id);
+  const { data: settlements = [] } = useSettlements(familyId);
+
+  const [settleVisible, setSettleVisible] = useState(false);
 
   const membersById = useMemo(
     () => new Map(members.map((member) => [member.id, member])),
     [members],
   );
 
-  const payerName =
-    membersById.get(expense?.paidByMemberId ?? "")?.nickname ?? "Member";
+  const myMemberId = useMemo(
+    () =>
+      members.find((member) => member.userId === session?.user.id)?.id ?? null,
+    [members, session],
+  );
+
+  const payerId = expense?.paidByMemberId ?? "";
+  const payerName = membersById.get(payerId)?.nickname ?? "Member";
+  const payerMember = membersById.get(payerId) ?? null;
 
   const beneficiaryList = useMemo(() => {
     if (!expense) return [];
 
-    const payerId = expense.paidByMemberId;
     const withPayer = shares.some((share) => share.memberId === payerId)
       ? shares.map((share) => share.memberId)
       : [payerId, ...shares.map((share) => share.memberId)];
 
     return withPayer;
-  }, [expense, shares]);
+  }, [expense, shares, payerId]);
 
   const shareAmount = useMemo(() => {
     if (!expense || shares.length === 0) return null;
 
     return Math.round(expense.amount / shares.length);
   }, [expense, shares]);
+
+  const settledByMember = useMemo(() => {
+    if (!expense) return new Map<string, number>();
+
+    const settled = new Map<string, number>();
+
+    for (const settlement of settlements) {
+      if (settlement.toMemberId !== expense.paidByMemberId) continue;
+      // Count both linked (this expense) and unlinked (general) settlements
+      if (
+        settlement.expenseId !== null &&
+        settlement.expenseId !== expense.id
+      ) {
+        continue;
+      }
+
+      settled.set(
+        settlement.fromMemberId,
+        (settled.get(settlement.fromMemberId) ?? 0) + settlement.amount,
+      );
+    }
+
+    return settled;
+  }, [settlements, expense]);
+
+  const remainingFor = (memberId: string): number | null => {
+    if (!expense || memberId === payerId || shareAmount === null) return null;
+
+    const settled = settledByMember.get(memberId) ?? 0;
+    return Math.max(0, shareAmount - Math.round(settled));
+  };
+
+  const myRemaining = myMemberId ? remainingFor(myMemberId) : null;
 
   return (
     <Modal
@@ -120,9 +168,14 @@ export default function ExpenseDetailModal({
                 ) : (
                   <View className="flex-row flex-wrap gap-2">
                     {beneficiaryList.map((memberId) => {
-                      const isPayer = memberId === expense.paidByMemberId;
+                      const isPayer = memberId === payerId;
                       const nickname =
                         membersById.get(memberId)?.nickname ?? "Member";
+                      const remaining = remainingFor(memberId);
+                      const isPartial =
+                        remaining !== null &&
+                        remaining > 0 &&
+                        remaining < (shareAmount ?? 0);
 
                       return (
                         <View
@@ -139,11 +192,19 @@ export default function ExpenseDetailModal({
                             {nickname}
                           </Text>
 
-                          {isPayer && (
+                          {isPayer ? (
                             <Text className="text-xs font-bold text-positive">
                               Paid
                             </Text>
-                          )}
+                          ) : remaining === 0 ? (
+                            <Text className="text-xs font-bold text-positive">
+                              Paid
+                            </Text>
+                          ) : isPartial ? (
+                            <Text className="text-xs font-bold text-secondary">
+                              Partially paid
+                            </Text>
+                          ) : null}
                         </View>
                       );
                     })}
@@ -159,22 +220,59 @@ export default function ExpenseDetailModal({
 
                   <View className="bg-tint-sand rounded-2xl px-4 py-1">
                     {beneficiaryList
-                      .filter((memberId) => memberId !== expense.paidByMemberId)
+                      .filter((memberId) => memberId !== payerId)
                       .map((memberId) => {
                         const nickname =
                           membersById.get(memberId)?.nickname ?? "Member";
+                        const remaining = remainingFor(memberId);
+                        const settled =
+                          (settledByMember.get(memberId) ?? 0) > 0
+                            ? Math.round(settledByMember.get(memberId) ?? 0)
+                            : 0;
+
+                        if (remaining === null) return null;
 
                         return (
                           <View
                             key={memberId}
-                            className="flex-row items-center justify-between py-3"
+                            className="flex-row items-center justify-between py-3 gap-4"
                           >
-                            <Text className="text-sm text-text-debt">
-                              {nickname} owes {payerName}{" "}
-                              <Text className="font-bold text-text-debt-strong">
-                                P{formatNumber(shareAmount)}
-                              </Text>
+                            <Text className="text-sm text-text-debt flex-1">
+                              {remaining === 0 ? (
+                                <>
+                                  {nickname} has settled with {payerName}{" "}
+                                  <Text className="text-positive font-bold">
+                                    ✓
+                                  </Text>
+                                </>
+                              ) : settled > 0 ? (
+                                <>
+                                  {nickname} has paid {payerName} P
+                                  {formatNumber(settled)} —{" "}
+                                  <Text className="font-bold text-text-debt-strong">
+                                    P{formatNumber(remaining)} left
+                                  </Text>
+                                </>
+                              ) : (
+                                <>
+                                  {nickname} owes {payerName}{" "}
+                                  <Text className="font-bold text-text-debt-strong">
+                                    P{formatNumber(remaining)}
+                                  </Text>
+                                </>
+                              )}
                             </Text>
+
+                            {memberId === myMemberId && remaining > 0 && (
+                              <Pressable
+                                onPress={() => setSettleVisible(true)}
+                                className="bg-error-container rounded-full px-4 py-2 active:opacity-70"
+                              >
+                                <Text className="text-on-error-container font-bold text-xs">
+                                  Settle
+                                </Text>
+                              </Pressable>
+                            )}
                           </View>
                         );
                       })}
@@ -196,6 +294,20 @@ export default function ExpenseDetailModal({
                 </View>
               )}
             </View>
+
+            {payerMember && myMemberId && myRemaining !== null && (
+              <SettleModal
+                visible={settleVisible}
+                familyId={familyId}
+                myMemberId={myMemberId}
+                member={payerMember}
+                amountOwed={myRemaining}
+                expenseId={expense.id}
+                titlePrefix={expense.title}
+                onClose={() => setSettleVisible(false)}
+                onSettled={() => setSettleVisible(false)}
+              />
+            )}
           </View>
         )}
       </View>

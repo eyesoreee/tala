@@ -6,6 +6,8 @@ export interface Settlement {
   fromMemberId: string;
   toMemberId: string;
 
+  expenseId: string | null;
+
   amount: number;
 
   settledAt: string;
@@ -20,6 +22,8 @@ export interface Settlement {
 export interface CreateSettlementInput {
   fromMemberId: string;
   toMemberId: string;
+
+  expenseId?: string | null;
 
   amount: number;
 

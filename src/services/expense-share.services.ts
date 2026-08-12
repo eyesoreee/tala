@@ -49,6 +49,18 @@ class ExpenseShareService {
     return { data: (data ?? []).map(mapExpenseShare), error: null };
   }
 
+  async getFamilyShares(familyId: string) {
+    const { data, error } = await supabase
+      .from("expense_shares")
+      .select(`${expenseShareSelect}, expenses!inner(family_id)`)
+      .eq("expenses.family_id", familyId)
+      .is("deleted_at", null)
+      .order("created_at", { ascending: true });
+
+    if (error) return { data: null, error };
+    return { data: (data ?? []).map(mapExpenseShare), error: null };
+  }
+
   async addMember(expenseId: string, memberId: string) {
     const { data: existing, error: existingError } = await supabase
       .from("expense_shares")

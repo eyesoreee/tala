@@ -92,6 +92,7 @@ export default function HomeTabScreen() {
       <FloatingActionButton onPress={openAddExpense} />
 
       <ExpenseDetailModal
+        key={selectedExpense?.id ?? "none"}
         expense={selectedExpense}
         members={members}
         onClose={() => setSelectedExpense(null)}

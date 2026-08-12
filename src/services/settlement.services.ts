@@ -6,6 +6,7 @@ type SettlementRow = {
   family_id: string;
   from_member_id: string;
   to_member_id: string;
+  expense_id: string | null;
   amount: number;
   settled_at: string;
   notes: string | null;
@@ -15,7 +16,7 @@ type SettlementRow = {
 };
 
 const settlementSelect =
-  "id, family_id, from_member_id, to_member_id, amount, settled_at, notes, created_at, updated_at, deleted_at";
+  "id, family_id, from_member_id, to_member_id, expense_id, amount, settled_at, notes, created_at, updated_at, deleted_at";
 
 function mapSettlement(row: SettlementRow): Settlement {
   return {
@@ -23,6 +24,7 @@ function mapSettlement(row: SettlementRow): Settlement {
     familyId: row.family_id,
     fromMemberId: row.from_member_id,
     toMemberId: row.to_member_id,
+    expenseId: row.expense_id,
     amount: row.amount,
     settledAt: row.settled_at,
     notes: row.notes,
@@ -46,21 +48,24 @@ class SettlementService {
   }
 
   async recordSettlement(familyId: string, input: CreateSettlementInput) {
-    const { data, error } = await supabase.rpc("record_settlement", {
-      p_family_id: familyId,
-      p_from_member_id: input.fromMemberId,
-      p_to_member_id: input.toMemberId,
-      p_amount: input.amount,
-      p_settled_at: input.settledAt ?? null,
-      p_notes: input.notes ?? null,
-    });
+    const { data, error } = await supabase
+      .from("settlements")
+      .insert([
+        {
+          family_id: familyId,
+          from_member_id: input.fromMemberId,
+          to_member_id: input.toMemberId,
+          expense_id: input.expenseId ?? null,
+          amount: input.amount,
+          settled_at: input.settledAt ?? new Date().toISOString(),
+          notes: input.notes ?? null,
+        },
+      ])
+      .select(settlementSelect)
+      .single();
 
     if (error) return { data: null, error };
-
-    const row = Array.isArray(data) ? data[0] : data;
-    if (!row) return { data: null, error: { message: "Settlement failed." } };
-
-    return { data: mapSettlement(row as SettlementRow), error: null };
+    return { data: mapSettlement(data), error: null };
   }
 
   async deleteSettlement(id: string) {

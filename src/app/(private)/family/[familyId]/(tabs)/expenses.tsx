@@ -230,6 +230,7 @@ export default function ExpensesTabScreen() {
       />
 
       <ExpenseDetailModal
+        key={selectedExpense?.id ?? "none"}
         expense={selectedExpense}
         members={members}
         onClose={() => setSelectedExpense(null)}
