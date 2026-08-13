@@ -15,6 +15,9 @@ export function useCreateExpense() {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.expenses(input.familyId),
       });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.familyShares(input.familyId),
+      });
     },
   });
 }

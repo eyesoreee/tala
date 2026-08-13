@@ -98,16 +98,27 @@ export default function ExpensesTabScreen() {
       }
     }
 
-    const todayKey = new Date().toISOString().slice(0, 10);
+    const now = new Date();
+    const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
     return [...byDay.entries()]
       .sort(([a], [b]) => (a < b ? 1 : -1))
       .map(([dateKey, items]) => {
+        const sortedItems = items.sort((a, b) => {
+          const dateDiff =
+            new Date(b.expenseDate).getTime() -
+            new Date(a.expenseDate).getTime();
+          if (dateDiff !== 0) return dateDiff;
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        });
+
         const prefix = dateKey === todayKey ? "Today, " : "";
         return {
           dateKey,
           label: `${prefix}${formatShortDate(dateKey)}`,
-          items,
+          items: sortedItems,
         };
       });
   }, [filteredExpenses]);

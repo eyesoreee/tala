@@ -81,7 +81,8 @@ class ExpenseService {
       .select(expenseSelect)
       .eq("family_id", familyId)
       .is("deleted_at", null)
-      .order("expense_date", { ascending: false });
+      .order("expense_date", { ascending: false })
+      .order("created_at", { ascending: false });
 
     if (error) return { data: null, error };
     return { data: (data ?? []).map(mapExpense), error: null };
@@ -93,7 +94,8 @@ class ExpenseService {
       .select(expenseSelect)
       .eq("paid_by_member_id", memberId)
       .is("deleted_at", null)
-      .order("expense_date", { ascending: false });
+      .order("expense_date", { ascending: false })
+      .order("created_at", { ascending: false });
 
     if (error) return { data: null, error };
     return { data: (data ?? []).map(mapExpense), error: null };
