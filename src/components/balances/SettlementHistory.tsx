@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { formatNumber, getInitials } from "@/utils/format";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
 import { useMemo, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
 
 const AVATAR_TONES = [
   "bg-avatar-green",
@@ -18,6 +18,12 @@ const AVATAR_TONES = [
 interface SettlementHistoryProps {
   settlements: Settlement[];
   members: FamilyMember[];
+}
+
+interface SettlementRow {
+  settlement: Settlement;
+  isMine: boolean;
+  otherMember: FamilyMember;
 }
 
 export default function SettlementHistory({
@@ -38,16 +44,29 @@ export default function SettlementHistory({
     [members, session],
   );
 
-  const sorted = useMemo(
-    () =>
-      [...settlements].sort(
-        (a, b) =>
-          new Date(b.settledAt).getTime() - new Date(a.settledAt).getTime(),
-      ),
-    [settlements],
-  );
+  const rows = useMemo<SettlementRow[]>(() => {
+    const sorted = [...settlements].sort(
+      (a, b) =>
+        new Date(b.settledAt).getTime() - new Date(a.settledAt).getTime(),
+    );
 
-  if (sorted.length === 0) return null;
+    const result: SettlementRow[] = [];
+
+    for (const settlement of sorted) {
+      const fromMember = membersById.get(settlement.fromMemberId);
+      const toMember = membersById.get(settlement.toMemberId);
+      if (!fromMember || !toMember) continue;
+
+      const isMine = settlement.fromMemberId === myMemberId;
+      const otherMember = isMine ? toMember : fromMember;
+
+      result.push({ settlement, isMine, otherMember });
+    }
+
+    return result;
+  }, [settlements, membersById, myMemberId]);
+
+  if (rows.length === 0) return null;
 
   return (
     <View className="gap-4">
@@ -63,7 +82,7 @@ export default function SettlementHistory({
           </Text>
           <View className="bg-primary-container rounded-full px-2.5 py-0.5">
             <Text className="text-on-primary-container font-bold text-xs">
-              {sorted.length}
+              {rows.length}
             </Text>
           </View>
         </View>
@@ -76,27 +95,25 @@ export default function SettlementHistory({
       </Pressable>
 
       {expanded && (
-        <View className="bg-surface rounded-2xl p-6 gap-4">
-          {sorted.map((settlement, index) => {
-            const fromMember = membersById.get(settlement.fromMemberId);
-            const toMember = membersById.get(settlement.toMemberId);
-            if (!fromMember || !toMember) return null;
+        <View className="bg-surface rounded-2xl px-6 py-2">
+          <FlatList
+            data={rows}
+            keyExtractor={(item) => item.settlement.id}
+            scrollEnabled={false}
+            nestedScrollEnabled
+            ItemSeparatorComponent={() => (
+              <View className="h-px bg-outline-variant/50" />
+            )}
+            renderItem={({ item }) => {
+              const { settlement, isMine, otherMember } = item;
+              const date = new Date(settlement.settledAt);
+              const dateLabel = date.toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+              });
 
-            const isMine = settlement.fromMemberId === myMemberId;
-            const otherMember = isMine ? toMember : fromMember;
-            const date = new Date(settlement.settledAt);
-            const dateLabel = date.toLocaleDateString(undefined, {
-              month: "short",
-              day: "numeric",
-            });
-
-            return (
-              <View key={settlement.id}>
-                {index > 0 && (
-                  <View className="h-px bg-outline-variant/50 mb-4" />
-                )}
-
-                <View className="flex-row items-center gap-3">
+              return (
+                <View className="flex-row items-center gap-3 py-3.5">
                   <View
                     className={`w-10 h-10 rounded-full items-center justify-center ${
                       AVATAR_TONES[
@@ -115,8 +132,8 @@ export default function SettlementHistory({
                       numberOfLines={1}
                     >
                       {isMine
-                        ? `You paid ${toMember.nickname}`
-                        : `${fromMember.nickname} paid you`}
+                        ? `You paid ${otherMember.nickname}`
+                        : `${otherMember.nickname} paid you`}
                     </Text>
                     <Text className="text-xs text-on-surface-variant mt-0.5">
                       {dateLabel}
@@ -139,9 +156,9 @@ export default function SettlementHistory({
                     />
                   </View>
                 </View>
-              </View>
-            );
-          })}
+              );
+            }}
+          />
         </View>
       )}
     </View>

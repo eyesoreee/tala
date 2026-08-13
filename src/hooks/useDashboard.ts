@@ -1,5 +1,6 @@
 import { RecentExpenseItem } from "@/components/dashboard/RecentExpenses";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBalances } from "@/hooks/useBalances";
 import { useExpenses } from "@/hooks/useExpenses";
 import { useFamily } from "@/hooks/useFamily";
 import { useFamilyMembers } from "@/hooks/useFamilyMembers";
@@ -23,17 +24,29 @@ export function useDashboard() {
   const membersQuery = useFamilyMembers(familyId);
   const expensesQuery = useExpenses(familyId);
 
+  const {
+    totalYouOwe,
+    totalOwedToYou,
+    loading: balancesLoading,
+    refreshing: balancesRefreshing,
+    refetch: refetchBalances,
+  } = useBalances(familyId);
+
   const familyName = familyQuery.data?.name ?? "";
   const { data: members = [] } = membersQuery;
   const { data: expenses = [] } = expensesQuery;
 
   const loading =
-    familyQuery.isLoading || membersQuery.isLoading || expensesQuery.isLoading;
+    familyQuery.isLoading ||
+    membersQuery.isLoading ||
+    expensesQuery.isLoading ||
+    balancesLoading;
 
   const refreshing =
     familyQuery.isRefetching ||
     membersQuery.isRefetching ||
-    expensesQuery.isRefetching;
+    expensesQuery.isRefetching ||
+    balancesRefreshing;
 
   const membersById = useMemo(
     () => new Map(members.map((member) => [member.id, member])),
@@ -87,8 +100,9 @@ export function useDashboard() {
       familyQuery.refetch(),
       membersQuery.refetch(),
       expensesQuery.refetch(),
+      refetchBalances(),
     ]);
-  }, [familyQuery, membersQuery, expensesQuery]);
+  }, [familyQuery, membersQuery, expensesQuery, refetchBalances]);
 
   const goToExpenses = useCallback(() => {
     if (!familyId) return;
@@ -119,8 +133,8 @@ export function useDashboard() {
     totalSpent: formatPeso(totalSpent),
     youPaid: formatPeso(youPaid),
 
-    youOwe: "—",
-    othersOweYou: "—",
+    youOwe: formatPeso(totalYouOwe),
+    othersOweYou: formatPeso(totalOwedToYou),
 
     monthLabel: currentMonthLabel(),
     recentItems,

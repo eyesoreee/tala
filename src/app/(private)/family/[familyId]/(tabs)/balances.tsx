@@ -176,7 +176,7 @@ export default function BalancesTabScreen() {
 
               <Text className="text-sm text-on-primary-container/70">
                 {youOwe.length === 0 && owedToYou.length === 0
-                  ? "You&apos;re all settled up!"
+                  ? "You're all settled up!"
                   : netBalance >= 0
                     ? "You are owed a little more than you owe"
                     : "You owe a little more than you're owed"}
@@ -198,7 +198,7 @@ export default function BalancesTabScreen() {
               <View className="bg-surface rounded-2xl p-6 gap-4">
                 {youOwe.length === 0 ? (
                   <Text className="text-sm text-text-faint text-center py-2">
-                    Nothing owed — you&apos;re all caught up.
+                    Nothing owed — you're all caught up.
                   </Text>
                 ) : (
                   youOwe.map((row, index) => (
