@@ -14,13 +14,13 @@ export default function ResetPasswordScreen() {
             Coming soon
           </Text>
           <Text className="text-base text-text-secondary">
-            Password reset isn't available yet. We'll let you know when it's
-            ready.
+            Password reset isn&rsquo;t available yet. We&rsquo;ll let you know
+            when it&rsquo;s ready.
           </Text>
         </View>
 
         <Pressable onPress={() => router.replace("/")}>
-          <Text className="text-sm font-semibold text-text-muted text-center">
+          <Text className="text-sm font-semibold text-primary text-center">
             Back to Sign In
           </Text>
         </Pressable>

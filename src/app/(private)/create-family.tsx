@@ -50,13 +50,15 @@ export default function CreateFamilyScreen() {
           <ModalHeader title="Create family" />
 
           <View className="flex-1 justify-center gap-6">
-            <Text className="text-3xl font-bold text-text-primary">
-              Start a shared ledger
-            </Text>
-            <Text className="text-sm text-text-secondary">
-              Give your family a name. You will get an invite code to share with
-              the rest of the family.
-            </Text>
+            <View className="gap-2">
+              <Text className="text-3xl font-bold text-text-primary">
+                Start a shared ledger
+              </Text>
+              <Text className="text-sm text-text-secondary">
+                Give your family a name. You will get an invite code to share
+                with the rest of the family.
+              </Text>
+            </View>
 
             <InputField
               label="Family name"

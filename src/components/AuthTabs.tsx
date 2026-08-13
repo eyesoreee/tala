@@ -14,14 +14,14 @@ const TABS: { key: AuthMode; label: string }[] = [
 
 export function AuthTabs({ mode, onChange }: AuthTabsProps) {
   return (
-    <View className="w-full flex-row bg-surface-chip rounded-xl p-1">
+    <View className="w-full flex-row bg-surface-chip rounded-full p-1">
       {TABS.map((tab) => {
         const active = tab.key === mode;
         return (
           <Pressable
             key={tab.key}
             onPress={() => onChange(tab.key)}
-            className={`flex-1 items-center py-2.5 rounded-lg ${
+            className={`flex-1 items-center py-2.5 rounded-full ${
               active ? "bg-surface" : ""
             }`}
           >

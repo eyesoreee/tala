@@ -18,10 +18,10 @@ export default function ExpenseHeader({
       {onPress ? (
         <Pressable
           onPress={onPress}
-          className="active:opacity-70 flex-row items-center justify-between gap-2"
+          className="active:opacity-70 flex-row items-center justify-between gap-2 bg-primary-container rounded-full px-4 py-2"
         >
           <Text className="text-primary font-bold">{monthLabel}</Text>
-          <Ionicons name="chevron-down" size={20} color={colors.primary} />
+          <Ionicons name="chevron-down" size={16} color={colors.primary} />
         </Pressable>
       ) : (
         <Text className="text-primary font-bold">{monthLabel}</Text>

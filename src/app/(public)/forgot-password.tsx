@@ -14,8 +14,8 @@ export default function ForgotPasswordScreen() {
             Coming soon
           </Text>
           <Text className="text-base text-text-secondary">
-            Password reset isn't available yet. We'll let you know when it's
-            ready.
+            Password reset isn&rsquo;t available yet. We&rsquo;ll let you know
+            when it&rsquo;s ready.
           </Text>
         </View>
 

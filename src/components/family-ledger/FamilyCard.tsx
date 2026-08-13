@@ -1,3 +1,4 @@
+import { colors } from "@/constants/colors";
 import { MemberRole } from "@/constants/enums";
 import { cn } from "@/lib/cn";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
@@ -15,10 +16,10 @@ export function FamilyCard({ name, role, onPress }: FamilyCardProps) {
   return (
     <Pressable
       onPress={onPress}
-      className="active:opacity-80 w-full flex-row items-center gap-4 p-6 bg-surface border border-border rounded-xl"
+      className="active:opacity-80 w-full flex-row items-center gap-4 p-6 bg-surface border border-border rounded-2xl"
     >
       <View className="items-center justify-center size-16 rounded-3xl bg-primary-container">
-        <Ionicons name="people" size={26} color="#123128" />
+        <Ionicons name="people" size={26} color={colors.onPrimaryContainer} />
       </View>
 
       <View className="flex-1">
@@ -45,7 +46,7 @@ export function FamilyCard({ name, role, onPress }: FamilyCardProps) {
         </View>
       </View>
 
-      <Ionicons name="chevron-forward" size={20} color="#79837d" />
+      <Ionicons name="chevron-forward" size={20} color={colors.outline} />
     </Pressable>
   );
 }

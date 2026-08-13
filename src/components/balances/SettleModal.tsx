@@ -119,14 +119,14 @@ export default function SettleModal({
               <Pressable
                 onPress={onClose}
                 hitSlop={8}
-                className="active:opacity-70"
+                className="size-10 items-center justify-center rounded-full bg-surface-chip active:opacity-70"
               >
-                <Ionicons name="close" size={24} color={colors.outline} />
+                <Ionicons name="close" size={20} color={colors.textSecondary} />
               </Pressable>
             </View>
 
             <View className="bg-primary-container rounded-2xl items-center justify-center p-8 gap-4">
-              <Text className="text-on-primary-container/60 text-md">
+              <Text className="text-on-primary-container/60 text-base">
                 Amount
               </Text>
 
@@ -140,7 +140,7 @@ export default function SettleModal({
                   placeholder="0.00"
                   placeholderTextColor={colors.onPrimaryContainer + "66"}
                   keyboardType="decimal-pad"
-                  className="text-on-primary-container/40 font-bold text-6xl w-48 text-center p-0"
+                  className="text-on-primary-container font-bold text-6xl w-48 text-center p-0"
                 />
               </View>
             </View>

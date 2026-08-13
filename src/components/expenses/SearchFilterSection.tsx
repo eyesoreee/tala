@@ -35,7 +35,7 @@ export default function SearchFilterSection({
               onPress={() => onSelectCategory(category)}
             >
               <Text
-                className={`${isSelected ? "text-on-primary" : "text-on-primary-container"}`}
+                className={`text-sm font-medium ${isSelected ? "text-on-primary" : "text-on-primary-container"}`}
               >
                 {category}
               </Text>

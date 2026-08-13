@@ -29,7 +29,7 @@ export function BlockButton({
     <Pressable
       disabled={disabled}
       onPress={onPress}
-      className={`w-full items-center py-4 rounded-xl active:opacity-80 ${bg} ${
+      className={`w-full items-center py-4 rounded-full active:opacity-80 ${bg} ${
         disabled ? "opacity-50" : ""
       }`}
     >

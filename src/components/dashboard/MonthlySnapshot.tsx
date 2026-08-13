@@ -56,7 +56,7 @@ export default function MonthlySnapshot({
             label="Owed to you"
             value={othersOweYou}
             cardColor="bg-tint-blue"
-            textColor="text-accent"
+            textColor="text-positive"
           />
         </View>
       </View>

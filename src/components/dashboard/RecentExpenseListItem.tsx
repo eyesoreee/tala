@@ -22,12 +22,12 @@ export default function RecentExpenseListItem({
       onPress={onViewDetails}
       className="flex-row items-center py-4 active:opacity-70"
     >
-      <View className="w-12 h-12 rounded-full bg-secondary-container items-center justify-center">
-        <Text className="font-bold text-on-secondary-container">{initial}</Text>
+      <View className="w-12 h-12 rounded-full bg-primary-container items-center justify-center">
+        <Text className="font-bold text-on-primary-container">{initial}</Text>
       </View>
 
       <View className="flex-1 ml-5">
-        <Text className="font-bold text-md text-on-surface">{title}</Text>
+        <Text className="font-bold text-base text-on-surface">{title}</Text>
 
         <Text className="text-sm text-on-surface-variant mt-1">{subtitle}</Text>
       </View>

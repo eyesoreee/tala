@@ -21,9 +21,9 @@ export function ModalHeader({ title }: ModalHeaderProps) {
       <Pressable
         onPress={closeModal}
         hitSlop={12}
-        className="size-10 items-center justify-center rounded-full active:opacity-60"
+        className="size-10 items-center justify-center rounded-full bg-surface-chip active:opacity-60"
       >
-        <Ionicons name="close" size={24} color={colors.textSecondary} />
+        <Ionicons name="close" size={20} color={colors.textSecondary} />
       </Pressable>
 
       <Text className="text-base font-semibold text-text-primary">{title}</Text>

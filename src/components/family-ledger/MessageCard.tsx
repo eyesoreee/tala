@@ -8,11 +8,11 @@ interface MessageCardProps {
 export default function MessageCard({ title, subtitle }: MessageCardProps) {
   return (
     <View className="w-full bg-primary-container/50 p-8 mt-4 gap-3 items-center justify-center rounded-2xl">
-      <Text className="font-bold text-on-primary-container/50 text-center">
+      <Text className="font-bold text-on-primary-container text-center">
         {title}
       </Text>
 
-      <Text className="text-sm text-on-primary-container/50 text-center">
+      <Text className="text-sm text-on-primary-container/70 text-center">
         {subtitle}
       </Text>
     </View>

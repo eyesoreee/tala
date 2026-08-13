@@ -34,7 +34,7 @@ export function ActionCard({
       disabled={disabled}
       onPress={onPress}
       className={cn(
-        "w-full flex-row items-center gap-4 p-6 bg-surface border border-border rounded-xl active:opacity-80",
+        "w-full flex-row items-center gap-4 p-6 bg-surface border border-border rounded-2xl active:opacity-80",
         disabled && "opacity-50",
       )}
     >

@@ -64,8 +64,8 @@ export default function ExpenseDetailModal({
             <View className="self-center w-10 h-1 rounded-full bg-outline-variant mb-5" />
 
             <View className="flex-row items-center gap-4 pb-6">
-              <View className="w-16 h-16 rounded-full bg-avatar-mint-dark items-center justify-center">
-                <Text className="font-bold text-2xl text-text-avatar">
+              <View className="w-16 h-16 rounded-full bg-primary-container items-center justify-center">
+                <Text className="font-bold text-2xl text-on-primary-container">
                   {getInitials(payerName)}
                 </Text>
               </View>

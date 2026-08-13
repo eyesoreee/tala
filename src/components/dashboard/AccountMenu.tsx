@@ -63,9 +63,9 @@ export default function AccountMenu({
             <Pressable
               onPress={onClose}
               hitSlop={8}
-              className="active:opacity-70"
+              className="size-10 items-center justify-center rounded-full bg-surface-chip active:opacity-70"
             >
-              <Ionicons name="close" size={24} color={colors.outline} />
+              <Ionicons name="close" size={20} color={colors.textSecondary} />
             </Pressable>
           </View>
 

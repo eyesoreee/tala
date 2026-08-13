@@ -61,13 +61,15 @@ export default function JoinFamilyScreen() {
           <ModalHeader title="Join family" />
 
           <View className="flex-1 justify-center gap-6">
-            <Text className="text-3xl font-bold text-text-primary">
-              Join an existing family
-            </Text>
-            <Text className="text-sm text-text-secondary">
-              Enter the invite code shared by your family, and set a nickname
-              they will see you by.
-            </Text>
+            <View className="gap-2">
+              <Text className="text-3xl font-bold text-text-primary">
+                Join an existing family
+              </Text>
+              <Text className="text-sm text-text-secondary">
+                Enter the invite code shared by your family, and set a nickname
+                they will see you by.
+              </Text>
+            </View>
 
             <InputField
               label="Invite code"

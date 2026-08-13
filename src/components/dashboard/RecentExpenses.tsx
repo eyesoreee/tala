@@ -30,7 +30,7 @@ export default function RecentExpenses({
         onPress={onViewAll}
       />
 
-      <View className="bg-surface rounded-3xl px-6">
+      <View className="bg-surface rounded-2xl px-6">
         {items.length === 0 ? (
           <Text className="py-10 text-center text-sm text-text-faint">
             No expenses yet. Tap + to add your first one.

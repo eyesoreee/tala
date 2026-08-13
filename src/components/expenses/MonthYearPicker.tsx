@@ -40,7 +40,7 @@ export default function MonthYearPicker({
           <View className="flex-row items-center justify-between">
             <Pressable
               onPress={() => changeYear(-1)}
-              className="active:opacity-70"
+              className="active:opacity-70 size-10 items-center justify-center rounded-full bg-surface-chip"
               hitSlop={8}
             >
               <Ionicons
@@ -54,7 +54,7 @@ export default function MonthYearPicker({
 
             <Pressable
               onPress={() => changeYear(1)}
-              className="active:opacity-70"
+              className="active:opacity-70 size-10 items-center justify-center rounded-full bg-surface-chip"
               hitSlop={8}
             >
               <Ionicons

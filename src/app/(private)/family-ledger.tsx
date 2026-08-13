@@ -109,7 +109,11 @@ export default function FamilyLedgerScreen() {
           />
 
           <View className="mt-6">
-            <BlockButton text="SIGNOUT" onPress={signOut} />
+            <BlockButton
+              text="Sign out"
+              variant="secondary"
+              onPress={signOut}
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

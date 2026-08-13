@@ -152,7 +152,7 @@ export default function ExpensesTabScreen() {
             />
 
             <View className="flex-row justify-between items-center">
-              <Text className="text-md font-medium text-text-faint">
+              <Text className="text-base font-medium text-text-faint">
                 {formatMonthYear(visibleMonth)}
               </Text>
 
@@ -183,7 +183,7 @@ export default function ExpensesTabScreen() {
           </View>
         }
         renderSectionHeader={({ section }) => (
-          <Text className="pt-6 pb-2 text-md font-medium text-text-faint">
+          <Text className="pt-6 pb-2 text-base font-medium text-text-faint">
             {section.title}
           </Text>
         )}
@@ -195,7 +195,7 @@ export default function ExpensesTabScreen() {
 
           return (
             <View
-              className={`bg-surface px-6 ${isFirst ? "rounded-t-3xl" : ""} ${isLast ? "rounded-b-3xl" : ""}`}
+              className={`bg-surface px-6 ${isFirst ? "rounded-t-2xl" : ""} ${isLast ? "rounded-b-2xl" : ""}`}
             >
               {index > 0 && <View className="h-px bg-outline-variant/50" />}
               <ExpenseCard
@@ -215,7 +215,7 @@ export default function ExpensesTabScreen() {
               <ActivityIndicator size="large" color={colors.primary} />
             </View>
           ) : (
-            <View className="mt-4 bg-surface rounded-3xl px-6">
+            <View className="mt-4 bg-surface rounded-2xl px-6">
               <Text className="py-10 text-center text-sm text-text-faint">
                 {expenses.length > 0
                   ? `No expenses in ${formatMonthYear(visibleMonth)}.`

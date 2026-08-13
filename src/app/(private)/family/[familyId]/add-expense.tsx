@@ -147,7 +147,9 @@ export default function AddExpenseScreen() {
           <ModalHeader title="Add expense" />
 
           <View className="bg-primary-container rounded-2xl items-center justify-center p-8 gap-4">
-            <Text className="text-on-primary-container/60 text-md">Amount</Text>
+            <Text className="text-on-primary-container/60 text-base">
+              Amount
+            </Text>
 
             <View className="flex-row items-center gap-6">
               <Text className="font-bold text-2xl text-on-primary-container">
@@ -159,7 +161,7 @@ export default function AddExpenseScreen() {
                 placeholder="0.00"
                 placeholderTextColor={colors.onPrimaryContainer + "66"}
                 keyboardType="decimal-pad"
-                className="text-on-primary-container/40 font-bold text-6xl w-48 text-center p-0"
+                className="text-on-primary-container font-bold text-6xl w-48 text-center p-0"
               />
             </View>
           </View>
@@ -167,11 +169,13 @@ export default function AddExpenseScreen() {
           <View className="gap-2">
             <Text className="text-primary font-medium">Title</Text>
 
-            <View className="bg-surface rounded-lg px-2">
+            <View className="bg-surface border border-border rounded-xl px-4">
               <TextInput
                 value={title}
                 onChangeText={setTitle}
                 placeholder="What was this for?"
+                placeholderTextColor={colors.textFaint}
+                className="py-3 text-text-primary"
               />
             </View>
           </View>
@@ -189,7 +193,7 @@ export default function AddExpenseScreen() {
                     onPress={() => setCategory(item)}
                   >
                     <Text
-                      className={`${isSelected ? "text-on-primary" : "text-on-primary-container"}`}
+                      className={`text-sm font-medium ${isSelected ? "text-on-primary" : "text-on-primary-container"}`}
                     >
                       {item}
                     </Text>
@@ -234,7 +238,7 @@ export default function AddExpenseScreen() {
                         </Text>
                       </View>
                       <Text
-                        className={`${isSelected ? "text-primary font-semibold" : "text-on-background/80"}`}
+                        className={`text-sm ${isSelected ? "text-primary font-semibold" : "text-on-background/80"}`}
                       >
                         {member.nickname}
                       </Text>
@@ -305,7 +309,7 @@ export default function AddExpenseScreen() {
             <Text className="text-primary font-medium">Date</Text>
             <Pressable
               onPress={() => setShowDatePicker(true)}
-              className="active:opacity-70 flex-row items-center justify-between bg-surface p-4 rounded-xl"
+              className="active:opacity-70 flex-row items-center justify-between bg-surface border border-border p-4 rounded-xl"
             >
               <View className="flex-row items-center gap-2">
                 <Ionicons name="calendar" color={colors.primary} size={20} />
@@ -348,15 +352,16 @@ export default function AddExpenseScreen() {
               <Text className="text-text-faint text-sm">(optional)</Text>
             </View>
 
-            <View className="bg-surface rounded-lg px-3 py-2 h-32">
+            <View className="bg-surface border border-border rounded-xl px-4 py-3 h-32">
               <TextInput
                 value={notes}
                 onChangeText={setNotes}
                 placeholder="Add a little context"
+                placeholderTextColor={colors.textFaint}
                 multiline={true}
                 numberOfLines={4}
                 textAlignVertical="top"
-                className="flex-1 text-text"
+                className="flex-1 text-text-primary"
               />
             </View>
           </View>

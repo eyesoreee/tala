@@ -22,6 +22,8 @@ export default function FloatingActionButton({
         items-center
         justify-center
         active:opacity-70
+        shadow-lg
+        shadow-primary/30
       "
       onPress={onPress}
     >

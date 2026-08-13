@@ -159,14 +159,14 @@ export default function BalancesTabScreen() {
         ) : (
           <>
             <View className="bg-primary-container p-8 rounded-3xl gap-3">
-              <Text className="text-md text-text-secondary font-semibold">
+              <Text className="text-base text-text-secondary font-semibold">
                 Your balance
               </Text>
 
               <Text
                 className={`text-4xl font-bold ${
                   netBalance >= 0
-                    ? "text-on-primary-container/70"
+                    ? "text-on-primary-container"
                     : "text-negative"
                 }`}
               >
@@ -189,7 +189,7 @@ export default function BalancesTabScreen() {
                   You owe
                 </Text>
                 {totalYouOwe > 0 && (
-                  <Text className="text-error font-bold">
+                  <Text className="text-negative font-bold">
                     P{formatNumber(totalYouOwe)} total
                   </Text>
                 )}
@@ -198,7 +198,7 @@ export default function BalancesTabScreen() {
               <View className="bg-surface rounded-2xl p-6 gap-4">
                 {youOwe.length === 0 ? (
                   <Text className="text-sm text-text-faint text-center py-2">
-                    Nothing owed — you're all caught up.
+                    Nothing owed — you&rsquo;re all caught up.
                   </Text>
                 ) : (
                   youOwe.map((row, index) => (
@@ -210,7 +210,7 @@ export default function BalancesTabScreen() {
                         member={row.member}
                         amount={row.amount}
                         buttonLabel="Settle"
-                        amountClassName="text-error"
+                        amountClassName="text-negative"
                         buttonClassName="bg-error-container"
                         buttonTextClassName="text-on-error-container"
                         onPress={() =>
@@ -232,7 +232,7 @@ export default function BalancesTabScreen() {
                   Owe you
                 </Text>
                 {totalOwedToYou > 0 && (
-                  <Text className="text-error font-bold">
+                  <Text className="text-positive font-bold">
                     P{formatNumber(totalOwedToYou)} total
                   </Text>
                 )}
@@ -253,7 +253,7 @@ export default function BalancesTabScreen() {
                         member={row.member}
                         amount={row.amount}
                         buttonLabel="Remind"
-                        amountClassName="text-primary"
+                        amountClassName="text-positive"
                         buttonClassName="bg-primary-container"
                         buttonTextClassName="text-on-primary-container"
                         onPress={() => remind(row.member)}
