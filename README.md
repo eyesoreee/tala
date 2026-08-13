@@ -1,56 +1,68 @@
-# Welcome to your Expo app 👋
+# Tala
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A family expense-sharing app: track shared expenses, split them among family members, and settle balances.
 
-## Get started
+## Features
 
-1. Install dependencies
+- Email/password sign in, sign up, and password reset
+- Create a family or join one with an invite code
+- Add expenses with title, amount, category, date, payer, and notes
+- Split each expense equally among selected members
+- Dashboard with a monthly snapshot: total spent, what you paid, what you owe, what others owe you
+- Expenses list with month, category, and search filters
+- Balances: per-member net balances, record settlements, settlement history
+- Edit your nickname; view family info and members
+
+## Tech stack
+
+- Expo SDK 57 / React Native 0.86 / React 19
+- expo-router (file-based routing)
+- TypeScript
+- NativeWind (Tailwind CSS)
+- Supabase (auth + Postgres backend)
+- TanStack React Query
+
+## Getting started
+
+Prerequisites: Node.js and npm, plus a Supabase project with the schema and auth configured.
+
+1. Create `.env.local` with your Supabase credentials:
+
+   ```
+   EXPO_PUBLIC_SUPABASE_URL=...
+   EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
+   ```
+
+2. Install dependencies:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+3. Start the dev server:
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+## Scripts
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+| Script            | Purpose                       |
+| ----------------- | ----------------------------- |
+| `npm start`       | Start the Expo dev server     |
+| `npm run android` | Run on Android (native build) |
+| `npm run ios`     | Run on iOS (native build)     |
+| `npm run web`     | Run the web target            |
+| `npm run lint`    | Run ESLint                    |
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Project structure
 
-## Get a fresh project
+- `src/app/` — screens and routing (`(public)` auth screens, `(private)` app screens)
+- `src/components/` — UI components
+- `src/hooks/` — data hooks (React Query)
+- `src/services/` — Supabase API calls
+- `src/constants/`, `src/utils/` — shared constants and helpers
 
-When you're ready, run:
+## Status
 
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Personal project in active development; not published. Amounts are shown in Philippine pesos. No automated tests yet.
